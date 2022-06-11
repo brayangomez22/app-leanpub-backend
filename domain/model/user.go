@@ -10,6 +10,7 @@ type SocialNetwork struct {
 type User struct {
 	Id              string          `json:"_id" bson:"_id"`
 	Name            string          `json:"name" bson:"name"`
+	Password        string          `json:"password" bson:"password"`
 	Email           string          `json:"email" bson:"email"`
 	About           string          `json:"about" bson:"about"`
 	AvatarUrl       string          `json:"avatarUrl" bson:"avatarUrl"`
@@ -19,4 +20,9 @@ type User struct {
 	CreatedAt       time.Time       `json:"createdAt" bson:"createdAt"`
 	UpdatedAt       time.Time       `json:"updatedAt" bson:"updatedAt"`
 	SocialNetworks  []SocialNetwork `json:"socialNetworks" bson:"socialNetworks"`
+}
+
+type RegisteredUser struct {
+	Email    string `json:"email" bson:"email"`
+	Password string `json:"password" bson:"password"`
 }
