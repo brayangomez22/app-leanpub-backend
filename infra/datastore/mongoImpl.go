@@ -182,17 +182,22 @@ func (mongoImpl *MongoGatewayImpl) GetBookById(id string) (*model.Book, error) {
 	return book, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) GetBookByAuthor(authorId string) (*model.Book, error) {
-	var book *model.Book
+func (mongoImpl *MongoGatewayImpl) GetBookByAuthor(authorId string) (*[]model.Book, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)
 
-	err := collection.FindOne(ctx, bson.M{"authors.authorId": authorId}).Decode(&book)
+	cursor, err := collection.Find(ctx, bson.M{"authors.authorId": authorId})
 	if err != nil {
-		return nil, errors.New("BOOK_NOT_FOUND")
+		return nil, err
 	}
 
-	return book, nil
+	var books []model.Book
+	err = cursor.All(ctx, &books)
+	if err != nil {
+		return nil, err
+	}
+
+	return &books, nil
 }
 
 func (mongoImpl *MongoGatewayImpl) GetBookByCategory(category string) (*[]model.Book, error) {

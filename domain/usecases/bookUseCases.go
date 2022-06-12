@@ -27,7 +27,7 @@ func (bookUseCase BookUseCase) GetBookById(id string) (*model.Book, error) {
 	return bookUseCase.datastore.GetBookById(id)
 }
 
-func (bookUseCase BookUseCase) GetBookByAuthor(authorId string) (*model.Book, error) {
+func (bookUseCase BookUseCase) GetBookByAuthor(authorId string) (*[]model.Book, error) {
 	return bookUseCase.datastore.GetBookByAuthor(authorId)
 }
 

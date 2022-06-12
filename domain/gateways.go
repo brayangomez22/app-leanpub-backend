@@ -12,7 +12,7 @@ type DatabaseGateway interface {
 	SaveBook(book *model.Book) (*model.Book, error)
 	GetBooks() (*[]model.Book, error)
 	GetBookById(id string) (*model.Book, error)
-	GetBookByAuthor(authorId string) (*model.Book, error)
+	GetBookByAuthor(authorId string) (*[]model.Book, error)
 	GetBookByCategory(category string) (*[]model.Book, error)
 	DeleteBook(id string) error
 	UpdateBook(book *model.Book) (*model.Book, error)
