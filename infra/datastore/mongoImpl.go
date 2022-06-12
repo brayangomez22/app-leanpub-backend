@@ -16,6 +16,7 @@ import (
 const (
 	database = "leanpub"
 	users    = "users"
+	books    = "books"
 )
 
 type MongoGatewayImpl struct {
@@ -131,4 +132,119 @@ func (mongoImpl *MongoGatewayImpl) UpdateUser(user *model.User) (*model.User, er
 	}
 
 	return user, nil
+}
+
+func (mongoImpl *MongoGatewayImpl) SaveBook(book *model.Book) (*model.Book, error) {
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	opts := options.Update().SetUpsert(true)
+	collection := mongoImpl.client.Database(database).Collection(books)
+
+	id, _ := uuid.NewRandom()
+	book.Id = id.String()
+
+	_, err := collection.UpdateOne(ctx, bson.M{"_id": book.Id}, bson.D{{"$set", book}}, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return book, nil
+}
+
+func (mongoImpl *MongoGatewayImpl) GetBooks() (*[]model.Book, error) {
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	collection := mongoImpl.client.Database(database).Collection(books)
+
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+
+	var books []model.Book
+	err = cursor.All(ctx, &books)
+	if err != nil {
+		return nil, err
+	}
+
+	return &books, nil
+}
+
+func (mongoImpl *MongoGatewayImpl) GetBookById(id string) (*model.Book, error) {
+	var book *model.Book
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	collection := mongoImpl.client.Database(database).Collection(books)
+
+	err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(&book)
+	if err != nil {
+		return nil, errors.New("BOOK_NOT_FOUND")
+	}
+
+	return book, nil
+}
+
+func (mongoImpl *MongoGatewayImpl) GetBookByAuthor(authorId string) (*model.Book, error) {
+	var book *model.Book
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	collection := mongoImpl.client.Database(database).Collection(books)
+
+	err := collection.FindOne(ctx, bson.M{"authors.authorId": authorId}).Decode(&book)
+	if err != nil {
+		return nil, errors.New("BOOK_NOT_FOUND")
+	}
+
+	return book, nil
+}
+
+func (mongoImpl *MongoGatewayImpl) GetBookByCategory(category string) (*model.Book, error) {
+	var book *model.Book
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	collection := mongoImpl.client.Database(database).Collection(books)
+
+	err := collection.FindOne(ctx, bson.D{
+		{"categories",
+			bson.D{
+				{"$all",
+					bson.A{
+						category,
+					},
+				},
+			},
+		},
+	})
+
+	if err != nil {
+		return nil, errors.New("BOOK_NOT_FOUND")
+	}
+
+	return book, nil
+}
+
+func (mongoImpl *MongoGatewayImpl) DeleteBook(id string) error {
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	collection := mongoImpl.client.Database(database).Collection(books)
+
+	_, err := collection.DeleteOne(ctx, bson.M{"_id": id})
+	if err != nil {
+		return err
+	}
+
+	return err
+}
+
+func (mongoImpl *MongoGatewayImpl) UpdateBook(book *model.Book) (*model.Book, error) {
+	var bookE *model.Book
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	opts := options.Update().SetUpsert(true)
+	collection := mongoImpl.client.Database(database).Collection(books)
+
+	err := collection.FindOne(ctx, bson.M{"_id": book.Id}).Decode(&bookE)
+	if err != nil {
+		return nil, errors.New("BOOK_NOT_FOUND")
+	}
+
+	_, err = collection.UpdateOne(ctx, bson.M{"_id": book.Id}, bson.D{{"$set", book}}, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return book, nil
 }
