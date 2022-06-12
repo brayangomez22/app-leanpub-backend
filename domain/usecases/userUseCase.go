@@ -28,22 +28,25 @@ func (userUseCase UserUseCase) SaveUser(user *model.User) (*model.User, error) {
 		return nil, errors.New("REGISTERED_EMAIL")
 	}
 
-	return userUseCase.SaveUser(user)
+	return userUseCase.datastore.SaveUser(user)
 }
 
 func (userUseCase UserUseCase) ValidateUser(registeredUser *model.RegisteredUser, user *model.User) (*model.User, error) {
 	return userUseCase.datastore.ValidateUser(registeredUser, user)
 }
 
-func (userUseCase UserUseCase) GetUser() (*[]model.User, error) {
+func (userUseCase UserUseCase) GetUsers() (*[]model.User, error) {
 	return userUseCase.datastore.GetUsers()
+}
+
+func (userUseCase UserUseCase) GetUserById(id string) (*model.User, error) {
+	return userUseCase.datastore.GetUserById(id)
 }
 
 func (userUseCase UserUseCase) DeleteUser(id string) error {
 	return userUseCase.datastore.DeleteUser(id)
 }
 
-func (userUseCase UserUseCase) UpdateUser(user *model.User) error {
-	_, err := userUseCase.datastore.UpdateUser(user)
-	return err
+func (userUseCase UserUseCase) UpdateUser(user *model.User) (*model.User, error) {
+	return userUseCase.datastore.UpdateUser(user)
 }

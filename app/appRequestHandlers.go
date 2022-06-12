@@ -57,13 +57,31 @@ func (app Application) ValidateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app Application) GetUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := app.userUseCases.GetUser()
+	users, err := app.userUseCases.GetUsers()
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	data, err := json.Marshal(users)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type","application/json")
+	w.Write(data)
+}
+
+func (app Application) GetUserById(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	user, err := app.userUseCases.GetUserById(id)
+	if err != nil{
+		http.Error(w, err.Error(),http.StatusInternalServerError)
+		return
+	}
+
+	data, err := json.Marshal(&user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -96,8 +114,17 @@ func (app Application) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.userUseCases.UpdateUser(&user)
+	updatedUser, err := app.userUseCases.UpdateUser(&user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+
+	data, err := json.Marshal(updatedUser)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type","application/json")
+	w.Write(data)
 }

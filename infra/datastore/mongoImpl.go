@@ -26,7 +26,7 @@ func NewMongoGatewayImpl() domain.DatabaseGateway {
 	return &MongoGatewayImpl{}
 }
 
-func (mongoImpl MongoGatewayImpl) Setup() {
+func (mongoImpl *MongoGatewayImpl) Setup() {
 	var err error
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	opt := options.Client()
@@ -38,7 +38,7 @@ func (mongoImpl MongoGatewayImpl) Setup() {
 	}
 }
 
-func (mongoImpl MongoGatewayImpl) SaveUser(user *model.User) (*model.User, error) {
+func (mongoImpl *MongoGatewayImpl) SaveUser(user *model.User) (*model.User, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	opts := options.Update().SetUpsert(true)
 	collection := mongoImpl.client.Database(database).Collection(users)
@@ -55,7 +55,7 @@ func (mongoImpl MongoGatewayImpl) SaveUser(user *model.User) (*model.User, error
 	return user, nil
 }
 
-func (mongoImpl MongoGatewayImpl) ValidateUser(registeredUser *model.RegisteredUser, user *model.User) (*model.User, error) {
+func (mongoImpl *MongoGatewayImpl) ValidateUser(registeredUser *model.RegisteredUser, user *model.User) (*model.User, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(users)
 
@@ -71,7 +71,7 @@ func (mongoImpl MongoGatewayImpl) ValidateUser(registeredUser *model.RegisteredU
 	return user, nil
 }
 
-func (mongoImpl MongoGatewayImpl) GetUsers() (*[]model.User, error) {
+func (mongoImpl *MongoGatewayImpl) GetUsers() (*[]model.User, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(users)
 
@@ -89,7 +89,20 @@ func (mongoImpl MongoGatewayImpl) GetUsers() (*[]model.User, error) {
 	return &users, nil
 }
 
-func (mongoImpl MongoGatewayImpl) DeleteUser(id string) error {
+func (mongoImpl *MongoGatewayImpl) GetUserById(id string) (*model.User, error) {
+	var user *model.User
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	collection := mongoImpl.client.Database(database).Collection(users)
+
+	err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(&user)
+	if err != nil {
+		return nil, errors.New("USER_NOT_FOUND")
+	}
+
+	return user, nil
+}
+
+func (mongoImpl *MongoGatewayImpl) DeleteUser(id string) error {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(users)
 
@@ -101,7 +114,7 @@ func (mongoImpl MongoGatewayImpl) DeleteUser(id string) error {
 	return err
 }
 
-func (mongoImpl MongoGatewayImpl) UpdateUser(user *model.User) (*model.User, error) {
+func (mongoImpl *MongoGatewayImpl) UpdateUser(user *model.User) (*model.User, error) {
 	var userE *model.User
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	opts := options.Update().SetUpsert(true)
@@ -113,7 +126,6 @@ func (mongoImpl MongoGatewayImpl) UpdateUser(user *model.User) (*model.User, err
 	}
 
 	_, err = collection.UpdateOne(ctx, bson.M{"_id": user.Id}, bson.D{{"$set", user}}, opts)
-
 	if err != nil {
 		return nil, err
 	}

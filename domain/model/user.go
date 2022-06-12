@@ -8,13 +8,13 @@ type SocialNetwork struct {
 }
 
 type User struct {
-	Id              string          `json:"_id" bson:"_id"`
+	Id              string          `json:"id" bson:"_id"`
 	Name            string          `json:"name" bson:"name"`
 	Password        string          `json:"password" bson:"password"`
 	Email           string          `json:"email" bson:"email"`
 	About           string          `json:"about" bson:"about"`
 	AvatarUrl       string          `json:"avatarUrl" bson:"avatarUrl"`
-	HasSubscription string          `json:"hasSubscription" bson:"hasSubscription"`
+	HasSubscription bool            `json:"hasSubscription" bson:"hasSubscription"`
 	IsAuthor        bool            `json:"isAuthor" bson:"isAuthor"`
 	IsAdmin         bool            `json:"isAdmin" bson:"isAdmin"`
 	CreatedAt       time.Time       `json:"createdAt" bson:"createdAt"`
