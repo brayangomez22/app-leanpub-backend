@@ -14,9 +14,10 @@ import (
 )
 
 const (
-	database = "leanpub"
-	users    = "users"
-	books    = "books"
+	database    = "leanpub"
+	users       = "users"
+	books       = "books"
+	bookContent = "bookContent"
 )
 
 type MongoGatewayImpl struct {
@@ -137,12 +138,12 @@ func (mongoImpl *MongoGatewayImpl) UpdateUser(user *model.User) (*model.User, er
 func (mongoImpl *MongoGatewayImpl) SaveBook(book *model.Book) (*model.Book, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	opts := options.Update().SetUpsert(true)
-	collection := mongoImpl.client.Database(database).Collection(books)
+	bookCollection := mongoImpl.client.Database(database).Collection(books)
 
 	id, _ := uuid.NewRandom()
 	book.Id = id.String()
 
-	_, err := collection.UpdateOne(ctx, bson.M{"_id": book.Id}, bson.D{{"$set", book}}, opts)
+	_, err := bookCollection.UpdateOne(ctx, bson.M{"_id": book.Id}, bson.D{{"$set", book}}, opts)
 	if err != nil {
 		return nil, err
 	}

@@ -10,6 +10,7 @@ func CreateApp() *Application {
 	wire.Build(
 		DataStoreProvider,
 		UserUseCasesProvider,
+		BookUseCasesProvider,
 		AppProvider,
 	)
 

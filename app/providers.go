@@ -8,4 +8,5 @@ import (
 
 var DataStoreProvider = wire.NewSet(datastore.NewMongoGatewayImpl)
 var UserUseCasesProvider = wire.NewSet(usecases.NewUserUseCase)
+var BookUseCasesProvider = wire.NewSet(usecases.NewBookUseCase)
 var AppProvider = wire.NewSet(NewApplication)

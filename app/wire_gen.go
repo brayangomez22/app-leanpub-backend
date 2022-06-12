@@ -16,6 +16,7 @@ import (
 func CreateApp() *Application {
 	databaseGateway := datastore.NewMongoGatewayImpl()
 	userUseCases := usecases.NewUserUseCase(databaseGateway)
-	application := NewApplication(databaseGateway, userUseCases)
+	bookUseCases := usecases.NewBookUseCase(databaseGateway)
+	application := NewApplication(databaseGateway, userUseCases, bookUseCases)
 	return application
 }
