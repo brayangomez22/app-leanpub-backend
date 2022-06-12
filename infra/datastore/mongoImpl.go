@@ -195,12 +195,11 @@ func (mongoImpl *MongoGatewayImpl) GetBookByAuthor(authorId string) (*model.Book
 	return book, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) GetBookByCategory(category string) (*model.Book, error) {
-	var book *model.Book
+func (mongoImpl *MongoGatewayImpl) GetBookByCategory(category string) (*[]model.Book, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)
 
-	err := collection.FindOne(ctx, bson.D{
+	cursor, err := collection.Find(ctx, bson.D{
 		{"categories",
 			bson.D{
 				{"$all",
@@ -213,10 +212,16 @@ func (mongoImpl *MongoGatewayImpl) GetBookByCategory(category string) (*model.Bo
 	})
 
 	if err != nil {
-		return nil, errors.New("BOOK_NOT_FOUND")
+		return nil, err
 	}
 
-	return book, nil
+	var books []model.Book
+	err = cursor.All(ctx, &books)
+	if err != nil {
+		return nil, err
+	}
+
+	return &books, nil
 }
 
 func (mongoImpl *MongoGatewayImpl) DeleteBook(id string) error {

@@ -17,6 +17,13 @@ func (app Application) Setup() {
 	app.Router.HandleFunc("/users/{id}", app.GetUserById).Methods(http.MethodGet, http.MethodOptions)
 	app.Router.HandleFunc("/users/{id}", app.DeleteUser).Methods(http.MethodDelete, http.MethodOptions)
 	app.Router.HandleFunc("/users", app.UpdateUser).Methods(http.MethodPut, http.MethodOptions)
+	app.Router.HandleFunc("/books", app.SaveBook).Methods(http.MethodPost, http.MethodOptions)
+	app.Router.HandleFunc("/books", app.GetBooks).Methods(http.MethodGet, http.MethodOptions)
+	app.Router.HandleFunc("/books/{id}", app.GetBookById).Methods(http.MethodGet, http.MethodOptions)
+	app.Router.HandleFunc("/books/author/{authorId}", app.GetBookByAuthor).Methods(http.MethodGet, http.MethodOptions)
+	app.Router.HandleFunc("/books/category/{category}", app.GetBookByCategory).Methods(http.MethodGet, http.MethodOptions)
+	app.Router.HandleFunc("/books/{id}", app.DeleteBook).Methods(http.MethodDelete, http.MethodOptions)
+	app.Router.HandleFunc("/books", app.UpdateBook).Methods(http.MethodPut, http.MethodOptions)
 }
 
 func (app Application) routeMiddleware(next http.Handler) http.Handler {

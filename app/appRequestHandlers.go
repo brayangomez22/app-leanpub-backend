@@ -209,14 +209,14 @@ func (app Application) GetBookByAuthor(w http.ResponseWriter, r *http.Request) {
 
 func (app Application) GetBookByCategory(w http.ResponseWriter, r *http.Request) {
 	category := mux.Vars(r)["category"]
-	book, err := app.bookUseCases.GetBookByCategory(category)
+	books, err := app.bookUseCases.GetBookByCategory(category)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	data, err := json.Marshal(&book)
+	data, err := json.Marshal(&books)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

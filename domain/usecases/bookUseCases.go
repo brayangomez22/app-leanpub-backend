@@ -31,7 +31,7 @@ func (bookUseCase BookUseCase) GetBookByAuthor(authorId string) (*model.Book, er
 	return bookUseCase.datastore.GetBookByAuthor(authorId)
 }
 
-func (bookUseCase BookUseCase) GetBookByCategory(category string) (*model.Book, error) {
+func (bookUseCase BookUseCase) GetBookByCategory(category string) (*[]model.Book, error) {
 	return bookUseCase.datastore.GetBookByCategory(category)
 }
 
