@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"leanpub-app/domain"
-	"leanpub-app/domain/model"
+	"leanpub-app/domain/models"
 	"os"
 	"time"
 )
@@ -40,13 +40,15 @@ func (mongoImpl *MongoGatewayImpl) Setup() {
 	}
 }
 
-func (mongoImpl *MongoGatewayImpl) SaveUser(user *model.User) (*model.User, error) {
+func (mongoImpl *MongoGatewayImpl) SaveUser(user *models.User) (*models.User, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	opts := options.Update().SetUpsert(true)
 	collection := mongoImpl.client.Database(database).Collection(users)
 
 	id, _ := uuid.NewRandom()
 	user.Id = id.String()
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
 
 	_, err := collection.UpdateOne(ctx, bson.M{"_id": user.Id}, bson.D{{"$set", user}}, opts)
 
@@ -57,7 +59,7 @@ func (mongoImpl *MongoGatewayImpl) SaveUser(user *model.User) (*model.User, erro
 	return user, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) ValidateUser(registeredUser *model.RegisteredUser, user *model.User) (*model.User, error) {
+func (mongoImpl *MongoGatewayImpl) ValidateUser(registeredUser *models.RegisteredUser, user *models.User) (*models.User, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(users)
 
@@ -73,7 +75,7 @@ func (mongoImpl *MongoGatewayImpl) ValidateUser(registeredUser *model.Registered
 	return user, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) GetUsers() (*[]model.User, error) {
+func (mongoImpl *MongoGatewayImpl) GetUsers() (*[]models.User, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(users)
 
@@ -82,7 +84,7 @@ func (mongoImpl *MongoGatewayImpl) GetUsers() (*[]model.User, error) {
 		return nil, err
 	}
 
-	var users []model.User
+	var users []models.User
 	err = cursor.All(ctx, &users)
 	if err != nil {
 		return nil, err
@@ -91,8 +93,8 @@ func (mongoImpl *MongoGatewayImpl) GetUsers() (*[]model.User, error) {
 	return &users, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) GetUserById(id string) (*model.User, error) {
-	var user *model.User
+func (mongoImpl *MongoGatewayImpl) GetUserById(id string) (*models.User, error) {
+	var user *models.User
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(users)
 
@@ -116,8 +118,8 @@ func (mongoImpl *MongoGatewayImpl) DeleteUser(id string) error {
 	return err
 }
 
-func (mongoImpl *MongoGatewayImpl) UpdateUser(user *model.User) (*model.User, error) {
-	var userE *model.User
+func (mongoImpl *MongoGatewayImpl) UpdateUser(user *models.User) (*models.User, error) {
+	var userE *models.User
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	opts := options.Update().SetUpsert(true)
 	collection := mongoImpl.client.Database(database).Collection(users)
@@ -127,6 +129,8 @@ func (mongoImpl *MongoGatewayImpl) UpdateUser(user *model.User) (*model.User, er
 		return nil, errors.New("USER_NOT_FOUND")
 	}
 
+	user.UpdatedAt = time.Now()
+
 	_, err = collection.UpdateOne(ctx, bson.M{"_id": user.Id}, bson.D{{"$set", user}}, opts)
 	if err != nil {
 		return nil, err
@@ -135,15 +139,15 @@ func (mongoImpl *MongoGatewayImpl) UpdateUser(user *model.User) (*model.User, er
 	return user, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) SaveBook(book *model.Book) (*model.Book, error) {
+func (mongoImpl *MongoGatewayImpl) SaveBook(book *models.Book) (*models.Book, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	opts := options.Update().SetUpsert(true)
-	bookCollection := mongoImpl.client.Database(database).Collection(books)
+	collection := mongoImpl.client.Database(database).Collection(books)
 
-	id, _ := uuid.NewRandom()
-	book.Id = id.String()
+	book.CreatedAt = time.Now()
+	book.UpdatedAt = time.Now()
 
-	_, err := bookCollection.UpdateOne(ctx, bson.M{"_id": book.Id}, bson.D{{"$set", book}}, opts)
+	_, err := collection.UpdateOne(ctx, bson.M{"_id": book.Id}, bson.D{{"$set", book}}, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +155,15 @@ func (mongoImpl *MongoGatewayImpl) SaveBook(book *model.Book) (*model.Book, erro
 	return book, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) GetBooks() (*[]model.Book, error) {
+func (mongoImpl MongoGatewayImpl) SaveBookSections(bookSection *models.BookSection) error {
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	collection := mongoImpl.client.Database(database).Collection(bookContent)
+
+	_, err := collection.InsertOne(ctx, bookSection)
+	return err
+}
+
+func (mongoImpl *MongoGatewayImpl) GetBooks() (*[]models.Book, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)
 
@@ -160,7 +172,7 @@ func (mongoImpl *MongoGatewayImpl) GetBooks() (*[]model.Book, error) {
 		return nil, err
 	}
 
-	var books []model.Book
+	var books []models.Book
 	err = cursor.All(ctx, &books)
 	if err != nil {
 		return nil, err
@@ -169,8 +181,8 @@ func (mongoImpl *MongoGatewayImpl) GetBooks() (*[]model.Book, error) {
 	return &books, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) GetBookById(id string) (*model.Book, error) {
-	var book *model.Book
+func (mongoImpl *MongoGatewayImpl) GetBookById(id string) (*models.Book, error) {
+	var book *models.Book
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)
 
@@ -182,7 +194,7 @@ func (mongoImpl *MongoGatewayImpl) GetBookById(id string) (*model.Book, error) {
 	return book, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) GetBookByAuthor(authorId string) (*[]model.Book, error) {
+func (mongoImpl *MongoGatewayImpl) GetBookByAuthor(authorId string) (*[]models.Book, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)
 
@@ -191,7 +203,7 @@ func (mongoImpl *MongoGatewayImpl) GetBookByAuthor(authorId string) (*[]model.Bo
 		return nil, err
 	}
 
-	var books []model.Book
+	var books []models.Book
 	err = cursor.All(ctx, &books)
 	if err != nil {
 		return nil, err
@@ -200,7 +212,7 @@ func (mongoImpl *MongoGatewayImpl) GetBookByAuthor(authorId string) (*[]model.Bo
 	return &books, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) GetBookByCategory(category string) (*[]model.Book, error) {
+func (mongoImpl *MongoGatewayImpl) GetBookByCategory(category string) (*[]models.Book, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)
 
@@ -220,7 +232,7 @@ func (mongoImpl *MongoGatewayImpl) GetBookByCategory(category string) (*[]model.
 		return nil, err
 	}
 
-	var books []model.Book
+	var books []models.Book
 	err = cursor.All(ctx, &books)
 	if err != nil {
 		return nil, err
@@ -241,8 +253,8 @@ func (mongoImpl *MongoGatewayImpl) DeleteBook(id string) error {
 	return err
 }
 
-func (mongoImpl *MongoGatewayImpl) UpdateBook(book *model.Book) (*model.Book, error) {
-	var bookE *model.Book
+func (mongoImpl *MongoGatewayImpl) UpdateBook(book *models.Book) (*models.Book, error) {
+	var bookE *models.Book
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	opts := options.Update().SetUpsert(true)
 	collection := mongoImpl.client.Database(database).Collection(books)
@@ -251,6 +263,8 @@ func (mongoImpl *MongoGatewayImpl) UpdateBook(book *model.Book) (*model.Book, er
 	if err != nil {
 		return nil, errors.New("BOOK_NOT_FOUND")
 	}
+
+	book.UpdatedAt = time.Now()
 
 	_, err = collection.UpdateOne(ctx, bson.M{"_id": book.Id}, bson.D{{"$set", book}}, opts)
 	if err != nil {

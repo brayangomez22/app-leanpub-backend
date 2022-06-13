@@ -3,12 +3,13 @@ package app
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"leanpub-app/domain/model"
+	"leanpub-app/domain/models"
+	"leanpub-app/domain/models/dtos"
 	"net/http"
 )
 
 func (app Application) SaveUser(w http.ResponseWriter, r *http.Request) {
-	var user model.User
+	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -27,13 +28,13 @@ func (app Application) SaveUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("content-type","application/json")
+	w.Header().Set("content-type", "application/json")
 	w.Write(data)
 }
 
 func (app Application) ValidateUser(w http.ResponseWriter, r *http.Request) {
-	var userData model.RegisteredUser
-	var user model.User
+	var userData models.RegisteredUser
+	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&userData)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -52,13 +53,13 @@ func (app Application) ValidateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("content-type","application/json")
+	w.Header().Set("content-type", "application/json")
 	w.Write(data)
 }
 
 func (app Application) GetUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := app.userUseCases.GetUsers()
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -69,15 +70,15 @@ func (app Application) GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("content-type","application/json")
+	w.Header().Set("content-type", "application/json")
 	w.Write(data)
 }
 
 func (app Application) GetUserById(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	user, err := app.userUseCases.GetUserById(id)
-	if err != nil{
-		http.Error(w, err.Error(),http.StatusInternalServerError)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -87,7 +88,7 @@ func (app Application) GetUserById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("content-type","application/json")
+	w.Header().Set("content-type", "application/json")
 	w.Write(data)
 }
 
@@ -95,14 +96,14 @@ func (app Application) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
 	err := app.userUseCases.DeleteUser(id)
-	if err != nil{
-		http.Error(w, err.Error(),http.StatusInternalServerError)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
 func (app Application) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	var user model.User
+	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -125,12 +126,12 @@ func (app Application) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("content-type","application/json")
+	w.Header().Set("content-type", "application/json")
 	w.Write(data)
 }
 
 func (app Application) SaveBook(w http.ResponseWriter, r *http.Request) {
-	var book model.Book
+	var book dtos.BookDto
 	err := json.NewDecoder(r.Body).Decode(&book)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -149,7 +150,7 @@ func (app Application) SaveBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("content-type","application/json")
+	w.Header().Set("content-type", "application/json")
 	w.Write(data)
 }
 
@@ -166,11 +167,11 @@ func (app Application) GetBooks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("content-type","application/json")
+	w.Header().Set("content-type", "application/json")
 	w.Write(data)
 }
 
-func (app Application) GetBookById(w http.ResponseWriter, r *http.Request)  {
+func (app Application) GetBookById(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	book, err := app.bookUseCases.GetBookById(id)
 	if err != nil {
@@ -184,7 +185,7 @@ func (app Application) GetBookById(w http.ResponseWriter, r *http.Request)  {
 		return
 	}
 
-	w.Header().Set("content-type","application/json")
+	w.Header().Set("content-type", "application/json")
 	w.Write(data)
 }
 
@@ -203,7 +204,7 @@ func (app Application) GetBookByAuthor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("content-type","application/json")
+	w.Header().Set("content-type", "application/json")
 	w.Write(data)
 }
 
@@ -222,7 +223,7 @@ func (app Application) GetBookByCategory(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	w.Header().Set("content-type","application/json")
+	w.Header().Set("content-type", "application/json")
 	w.Write(data)
 }
 
@@ -230,14 +231,14 @@ func (app Application) DeleteBook(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	err := app.bookUseCases.DeleteBook(id)
 
-	if err != nil{
-		http.Error(w, err.Error(),http.StatusInternalServerError)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
 func (app Application) UpdateBook(w http.ResponseWriter, r *http.Request) {
-	var book model.Book
+	var book models.Book
 	err := json.NewDecoder(r.Body).Decode(&book)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -261,6 +262,6 @@ func (app Application) UpdateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("content-type","application/json")
+	w.Header().Set("content-type", "application/json")
 	w.Write(data)
 }

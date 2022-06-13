@@ -2,7 +2,7 @@ package test
 
 import (
 	"github.com/stretchr/testify/mock"
-	"leanpub-app/domain/model"
+	"leanpub-app/domain/models"
 )
 
 type DbGateway struct {
@@ -15,36 +15,36 @@ func NewDbGateway() DbGateway {
 
 func (db DbGateway) Setup() {}
 
-func (db DbGateway) SaveUser(user *model.User) (*model.User, error) {
+func (db DbGateway) SaveUser(user *models.User) (*models.User, error) {
 	args := db.Called(user)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*model.User), args.Error(1)
+	return args.Get(0).(*models.User), args.Error(1)
 }
 
-func (db DbGateway) ValidateUser(registeredUser *model.RegisteredUser, user *model.User) (*model.User, error) {
+func (db DbGateway) ValidateUser(registeredUser *models.RegisteredUser, user *models.User) (*models.User, error) {
 	args := db.Called(registeredUser, user)
 	if args.Get(0) == nil || args.Get(1) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(1).(*model.User), args.Error(1)
+	return args.Get(1).(*models.User), args.Error(1)
 }
 
-func (db DbGateway) GetUsers() (*[]model.User, error) {
+func (db DbGateway) GetUsers() (*[]models.User, error) {
 	args := db.Called()
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*[]model.User), args.Error(1)
+	return args.Get(0).(*[]models.User), args.Error(1)
 }
 
-func (db DbGateway) GetUserById(id string) (*model.User, error){
+func (db DbGateway) GetUserById(id string) (*models.User, error){
 	args := db.Called(id)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*model.User), args.Error(1)
+	return args.Get(0).(*models.User), args.Error(1)
 }
 
 func (db DbGateway) DeleteUser(id string) error {
@@ -52,10 +52,10 @@ func (db DbGateway) DeleteUser(id string) error {
 	return args.Error(0)
 }
 
-func (db DbGateway) UpdateUser(user *model.User) (*model.User, error){
+func (db DbGateway) UpdateUser(user *models.User) (*models.User, error){
 	args := db.Called(user)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*model.User), args.Error(1)
+	return args.Get(0).(*models.User), args.Error(1)
 }

@@ -5,7 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"leanpub-app/app/test"
-	"leanpub-app/domain/model"
+	"leanpub-app/domain/models"
 	"testing"
 	"time"
 )
@@ -13,7 +13,7 @@ import (
 func TestSaveUserIsOk(t *testing.T) {
 	app := test.CreateApp()
 
-	user := &model.User{
+	user := &models.User{
 		Id:              "1234567890",
 		Email:           "test@example.com",
 		Password:        "test1234",
@@ -24,7 +24,7 @@ func TestSaveUserIsOk(t *testing.T) {
 		IsAdmin:         false,
 		HasSubscription: false,
 		IsAuthor:        false,
-		SocialNetworks:  []model.SocialNetwork{{Name: "Facebook", Url: "url"}},
+		SocialNetworks:  []models.SocialNetwork{{Name: "Facebook", Url: "url"}},
 		UpdatedAt:       time.Time{},
 	}
 
@@ -43,7 +43,7 @@ func TestSaveUserIsOk(t *testing.T) {
 func TestSaveUserIsWrongConnectionFailed(t *testing.T) {
 	app := test.CreateApp()
 
-	user := &model.User{
+	user := &models.User{
 		Id:              "1234567890",
 		Email:           "test@example.com",
 		Password:        "test1234",
@@ -54,7 +54,7 @@ func TestSaveUserIsWrongConnectionFailed(t *testing.T) {
 		IsAdmin:         false,
 		HasSubscription: false,
 		IsAuthor:        false,
-		SocialNetworks:  []model.SocialNetwork{{Name: "Facebook", Url: "url"}},
+		SocialNetworks:  []models.SocialNetwork{{Name: "Facebook", Url: "url"}},
 		UpdatedAt:       time.Time{},
 	}
 
@@ -72,7 +72,7 @@ func TestSaveUserIsWrongConnectionFailed(t *testing.T) {
 func TestValidateUserIsOk(t *testing.T) {
 	app := test.CreateApp()
 
-	user := &model.User{
+	user := &models.User{
 		Id:              "1234567890",
 		Email:           "test@example.com",
 		Password:        "test1234",
@@ -83,11 +83,11 @@ func TestValidateUserIsOk(t *testing.T) {
 		IsAdmin:         false,
 		HasSubscription: false,
 		IsAuthor:        false,
-		SocialNetworks:  []model.SocialNetwork{{Name: "Facebook", Url: "url"}},
+		SocialNetworks:  []models.SocialNetwork{{Name: "Facebook", Url: "url"}},
 		UpdatedAt:       time.Time{},
 	}
 
-	registerUser := &model.RegisteredUser{
+	registerUser := &models.RegisteredUser{
 		Email:    "test@example.com",
 		Password: "test1234",
 	}
@@ -105,7 +105,7 @@ func TestValidateUserIsOk(t *testing.T) {
 func TestValidateUserIsWrongConnectionFailed(t *testing.T) {
 	app := test.CreateApp()
 
-	user := &model.User{
+	user := &models.User{
 		Id:              "1234567890",
 		Email:           "test@example.com",
 		Password:        "test1234",
@@ -116,11 +116,11 @@ func TestValidateUserIsWrongConnectionFailed(t *testing.T) {
 		IsAdmin:         false,
 		HasSubscription: false,
 		IsAuthor:        false,
-		SocialNetworks:  []model.SocialNetwork{{Name: "Facebook", Url: "url"}},
+		SocialNetworks:  []models.SocialNetwork{{Name: "Facebook", Url: "url"}},
 		UpdatedAt:       time.Time{},
 	}
 
-	registerUser := &model.RegisteredUser{
+	registerUser := &models.RegisteredUser{
 		Email:    "test@example.com",
 		Password: "test1234",
 	}
@@ -138,7 +138,7 @@ func TestValidateUserIsWrongConnectionFailed(t *testing.T) {
 func TestUpdateUserIsOk(t *testing.T) {
 	app := test.CreateApp()
 
-	user := &model.User{
+	user := &models.User{
 		Id:              "1234567890",
 		Email:           "test@example.com",
 		Password:        "test1234",
@@ -149,7 +149,7 @@ func TestUpdateUserIsOk(t *testing.T) {
 		IsAdmin:         false,
 		HasSubscription: false,
 		IsAuthor:        false,
-		SocialNetworks:  []model.SocialNetwork{{Name: "Facebook", Url: "url"}},
+		SocialNetworks:  []models.SocialNetwork{{Name: "Facebook", Url: "url"}},
 		UpdatedAt:       time.Time{},
 	}
 
@@ -166,7 +166,7 @@ func TestUpdateUserIsOk(t *testing.T) {
 func TestUpdateUserIsWrongConnectionFailed(t *testing.T) {
 	app := test.CreateApp()
 
-	user := &model.User{
+	user := &models.User{
 		Id:              "1234567890",
 		Email:           "test@example.com",
 		Password:        "test1234",
@@ -177,7 +177,7 @@ func TestUpdateUserIsWrongConnectionFailed(t *testing.T) {
 		IsAdmin:         false,
 		HasSubscription: false,
 		IsAuthor:        false,
-		SocialNetworks:  []model.SocialNetwork{{Name: "Facebook", Url: "url"}},
+		SocialNetworks:  []models.SocialNetwork{{Name: "Facebook", Url: "url"}},
 		UpdatedAt:       time.Time{},
 	}
 
@@ -222,7 +222,7 @@ func TestDeleteUserIsWrongConnectionFailed(t *testing.T) {
 func TestGetUsersIsOk(t *testing.T) {
 	app := test.CreateApp()
 
-	users := []model.User{{
+	users := []models.User{{
 		Id:              "1234567890",
 		Email:           "test@example.com",
 		Password:        "test1234",
@@ -233,7 +233,7 @@ func TestGetUsersIsOk(t *testing.T) {
 		IsAdmin:         false,
 		HasSubscription: false,
 		IsAuthor:        false,
-		SocialNetworks:  []model.SocialNetwork{{Name: "Facebook", Url: "url"}},
+		SocialNetworks:  []models.SocialNetwork{{Name: "Facebook", Url: "url"}},
 		UpdatedAt:       time.Time{}},
 	}
 
@@ -263,7 +263,7 @@ func TestGetUsersIsWrongConnectionFailed(t *testing.T) {
 func TestGetUserByIdIsOk(t *testing.T) {
 	app := test.CreateApp()
 
-	user := &model.User{
+	user := &models.User{
 		Id:              "1234567890",
 		Email:           "test@example.com",
 		Password:        "test1234",
@@ -274,7 +274,7 @@ func TestGetUserByIdIsOk(t *testing.T) {
 		IsAdmin:         false,
 		HasSubscription: false,
 		IsAuthor:        false,
-		SocialNetworks:  []model.SocialNetwork{{Name: "Facebook", Url: "url"}},
+		SocialNetworks:  []models.SocialNetwork{{Name: "Facebook", Url: "url"}},
 		UpdatedAt:       time.Time{},
 	}
 	Id := "1234567890"
