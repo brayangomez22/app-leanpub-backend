@@ -11,6 +11,10 @@ const (
 	StateClosed      StateBook = "CLOSED"
 )
 
+type BookIndex struct {
+	Content []BookContent `json:"content" bson:"content"`
+}
+
 type Author struct {
 	AuthorId string `json:"authorId" bson:"authorId"`
 }

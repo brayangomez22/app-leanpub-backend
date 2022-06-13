@@ -81,6 +81,10 @@ func (bookUseCase BookUseCase) GetBooks() (*[]models.Book, error) {
 	return bookUseCase.datastore.GetBooks()
 }
 
+func (bookUseCase BookUseCase) GetBookIndex(id string) (*[]models.BookContent, error) {
+	return bookUseCase.datastore.GetBookIndex(id)
+}
+
 func (bookUseCase BookUseCase) GetBookById(id string) (*models.Book, error) {
 	return bookUseCase.datastore.GetBookById(id)
 }

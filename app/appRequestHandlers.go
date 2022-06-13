@@ -171,6 +171,23 @@ func (app Application) GetBooks(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
+func (app Application) GetBookIndex(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	book, err := app.bookUseCases.GetBookIndex(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	data, err := json.Marshal(&book)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	w.Write(data)
+}
+
 func (app Application) GetBookById(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	book, err := app.bookUseCases.GetBookById(id)
