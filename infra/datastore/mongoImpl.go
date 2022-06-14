@@ -207,7 +207,6 @@ func (mongoImpl MongoGatewayImpl) GetBookIndex(id string) (*[]models.BookContent
 	var response []models.BookContent
 	var bookIndex []models.BookIndex
 	err = cursor.All(ctx, &bookIndex)
-
 	if err != nil {
 		return nil, err
 	}
@@ -215,25 +214,67 @@ func (mongoImpl MongoGatewayImpl) GetBookIndex(id string) (*[]models.BookContent
 	for _, book := range bookIndex[0].Content {
 		response = append(response, book)
 	}
+
 	return &response, nil
 }
 
-func (mongoImpl MongoGatewayImpl) GetBookSections(id string) (*[]models.BookSection, error) {
+func (mongoImpl MongoGatewayImpl) GetSectionsByBookId(bookId string) (*[]models.BookSection, error)  {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
-	collection := mongoImpl.client.Database(database).Collection(bookSections)
+	collection := mongoImpl.client.Database(database).Collection(books)
 
-	cursor, err := collection.Find(ctx, bson.M{"_id": id})
+	pipeline := make([]bson.D, 0, 0)
+	queryPipeline := make([]bson.D, 0, 0)
+	pipeline = append(pipeline, bson.D{{"$match", bson.D{{"_id", bookId}}}})
+	pipeline = append(pipeline, bson.D{
+		{"$lookup",
+			bson.D{
+				{"from", "bookSections"},
+				{"localField", "content.sections.sectionId"},
+				{"foreignField", "_id"},
+				{"as", "index"},
+			},
+		},
+	})
+	pipeline = append(pipeline, bson.D{
+		{"$project",
+			bson.D{
+				{"index", 1},
+				{"_id", 0},
+			},
+		},
+	})
+	queryPipeline = append(queryPipeline, pipeline...)
+
+	cursor, err := collection.Aggregate(ctx, queryPipeline)
 	if err != nil {
 		return nil, err
 	}
 
-	var sections []models.BookSection
+	var response []models.BookSection
+	var sections []models.BookSectionIndex
 	err = cursor.All(ctx, &sections)
 	if err != nil {
 		return nil, err
 	}
 
-	return &sections, nil
+	for _, section := range sections[0].Index {
+		response = append(response, section)
+	}
+
+	return &response, nil
+}
+
+func (mongoImpl *MongoGatewayImpl) GetBookSectionById(id string) (*models.BookSection, error) {
+	var section *models.BookSection
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	collection := mongoImpl.client.Database(database).Collection(bookSections)
+
+	err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(&section)
+	if err != nil {
+		return nil, err
+	}
+
+	return section, nil
 }
 
 func (mongoImpl *MongoGatewayImpl) GetBookById(id string) (*models.Book, error) {

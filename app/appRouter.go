@@ -20,6 +20,8 @@ func (app Application) Setup() {
 	app.Router.HandleFunc("/books", app.SaveBook).Methods(http.MethodPost, http.MethodOptions)
 	app.Router.HandleFunc("/books", app.GetBooks).Methods(http.MethodGet, http.MethodOptions)
 	app.Router.HandleFunc("/books/index/{id}", app.GetBookIndex).Methods(http.MethodGet, http.MethodOptions)
+	app.Router.HandleFunc("/books/sections/{bookId}", app.GetSectionsByBookId).Methods(http.MethodGet, http.MethodOptions)
+	app.Router.HandleFunc("/books/section/{id}", app.GetBookSectionById).Methods(http.MethodGet, http.MethodOptions)
 	app.Router.HandleFunc("/books/{id}", app.GetBookById).Methods(http.MethodGet, http.MethodOptions)
 	app.Router.HandleFunc("/books/author/{authorId}", app.GetBookByAuthor).Methods(http.MethodGet, http.MethodOptions)
 	app.Router.HandleFunc("/books/category/{category}", app.GetBookByCategory).Methods(http.MethodGet, http.MethodOptions)

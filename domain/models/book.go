@@ -11,6 +11,10 @@ const (
 	StateClosed      StateBook = "CLOSED"
 )
 
+type BookSectionIndex struct {
+	Index []BookSection `json:"index" bson:"index"`
+}
+
 type BookIndex struct {
 	Content []BookContent `json:"content" bson:"content"`
 }
@@ -30,9 +34,13 @@ type BookSection struct {
 	Content string `json:"content" bson:"content"`
 }
 
+type BookSectionId struct {
+	SectionId string `json:"sectionId" bson:"sectionId"`
+}
+
 type BookContent struct {
-	Chapter  string   `json:"chapter" bson:"chapter"`
-	Sections []string `json:"sections" bson:"sections"`
+	Chapter  string          `json:"chapter" bson:"chapter"`
+	Sections []BookSectionId `json:"sections" bson:"sections"`
 }
 
 type Book struct {

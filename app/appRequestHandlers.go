@@ -188,6 +188,42 @@ func (app Application) GetBookIndex(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
+func (app Application) GetSectionsByBookId(w http.ResponseWriter, r *http.Request) {
+	bookId := mux.Vars(r)["bookId"]
+	sections, err := app.bookUseCases.GetSectionsByBookId(bookId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data, err := json.Marshal(&sections)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	w.Write(data)
+}
+
+func (app Application) GetBookSectionById(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	section, err := app.bookUseCases.GetBookSectionById(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data, err := json.Marshal(&section)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	w.Write(data)
+}
+
 func (app Application) GetBookById(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	book, err := app.bookUseCases.GetBookById(id)

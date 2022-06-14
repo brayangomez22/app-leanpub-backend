@@ -22,7 +22,7 @@ func (bookUseCase BookUseCase) SaveBook(book *dtos.BookDto) (*models.Book, error
 	var bookSection []models.BookSection
 	var newContents []models.BookContent
 	for _, content := range book.Content {
-		var sections []string
+		var sections []models.BookSectionId
 		for _, section := range content.Sections {
 			id, _ := uuid.NewRandom()
 
@@ -33,7 +33,10 @@ func (bookUseCase BookUseCase) SaveBook(book *dtos.BookDto) (*models.Book, error
 			}
 
 			bookSection = append(bookSection, newBookSection)
-			sections = append(sections, newBookSection.Id)
+			sectionId := models.BookSectionId{
+				SectionId: newBookSection.Id,
+			}
+			sections = append(sections, sectionId)
 		}
 
 		newContent := models.BookContent{
@@ -83,6 +86,14 @@ func (bookUseCase BookUseCase) GetBooks() (*[]models.Book, error) {
 
 func (bookUseCase BookUseCase) GetBookIndex(id string) (*[]models.BookContent, error) {
 	return bookUseCase.datastore.GetBookIndex(id)
+}
+
+func (bookUseCase BookUseCase) GetSectionsByBookId(bookId string) (*[]models.BookSection, error) {
+	return bookUseCase.datastore.GetSectionsByBookId(bookId)
+}
+
+func (bookUseCase BookUseCase) GetBookSectionById(id string) (*models.BookSection, error){
+	return bookUseCase.datastore.GetBookSectionById(id)
 }
 
 func (bookUseCase BookUseCase) GetBookById(id string) (*models.Book, error) {
