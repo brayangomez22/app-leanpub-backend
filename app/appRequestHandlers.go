@@ -242,9 +242,9 @@ func (app Application) GetBookById(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func (app Application) GetBookByAuthor(w http.ResponseWriter, r *http.Request) {
+func (app Application) GetBooksByAuthor(w http.ResponseWriter, r *http.Request) {
 	authorId := mux.Vars(r)["authorId"]
-	book, err := app.bookUseCases.GetBookByAuthor(authorId)
+	book, err := app.bookUseCases.GetBooksByAuthor(authorId)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -261,9 +261,9 @@ func (app Application) GetBookByAuthor(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func (app Application) GetBookByCategory(w http.ResponseWriter, r *http.Request) {
+func (app Application) GetBooksByCategory(w http.ResponseWriter, r *http.Request) {
 	category := mux.Vars(r)["category"]
-	books, err := app.bookUseCases.GetBookByCategory(category)
+	books, err := app.bookUseCases.GetBooksByCategory(category)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -102,12 +102,12 @@ func (bookUseCase BookUseCase) GetBookById(id string) (*models.Book, error) {
 	return bookUseCase.datastore.GetBookById(id)
 }
 
-func (bookUseCase BookUseCase) GetBookByAuthor(authorId string) (*[]models.Book, error) {
-	return bookUseCase.datastore.GetBookByAuthor(authorId)
+func (bookUseCase BookUseCase) GetBooksByAuthor(authorId string) (*[]models.Book, error) {
+	return bookUseCase.datastore.GetBooksByAuthor(authorId)
 }
 
-func (bookUseCase BookUseCase) GetBookByCategory(category string) (*[]models.Book, error) {
-	return bookUseCase.datastore.GetBookByCategory(category)
+func (bookUseCase BookUseCase) GetBooksByCategory(category string) (*[]models.Book, error) {
+	return bookUseCase.datastore.GetBooksByCategory(category)
 }
 
 func (bookUseCase BookUseCase) DeleteBook(id string) error {

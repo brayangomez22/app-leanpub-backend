@@ -118,7 +118,7 @@ func (db DbGateway) GetBookById(id string) (*models.Book, error) {
 	return args.Get(0).(*models.Book), args.Error(1)
 }
 
-func (db DbGateway) GetBookByAuthor(authorId string) (*[]models.Book, error) {
+func (db DbGateway) GetBooksByAuthor(authorId string) (*[]models.Book, error) {
 	args := db.Called(authorId)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -126,7 +126,7 @@ func (db DbGateway) GetBookByAuthor(authorId string) (*[]models.Book, error) {
 	return args.Get(0).(*[]models.Book), args.Error(1)
 }
 
-func (db DbGateway) GetBookByCategory(category string) (*[]models.Book, error) {
+func (db DbGateway) GetBooksByCategory(category string) (*[]models.Book, error) {
 	args := db.Called(category)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)

@@ -17,8 +17,8 @@ type DatabaseGateway interface {
 	GetSectionsByBookId(bookId string) (*[]models.BookSection, error)
 	GetBookSectionById(id string) (*models.BookSection, error)
 	GetBookById(id string) (*models.Book, error)
-	GetBookByAuthor(authorId string) (*[]models.Book, error)
-	GetBookByCategory(category string) (*[]models.Book, error)
+	GetBooksByAuthor(authorId string) (*[]models.Book, error)
+	GetBooksByCategory(category string) (*[]models.Book, error)
 	DeleteBook(id string) error
 	UpdateBook(book *models.Book) (*models.Book, error)
 	Setup()

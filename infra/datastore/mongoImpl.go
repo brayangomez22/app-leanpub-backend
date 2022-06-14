@@ -298,7 +298,7 @@ func (mongoImpl *MongoGatewayImpl) GetBookById(id string) (*models.Book, error) 
 	return book, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) GetBookByAuthor(authorId string) (*[]models.Book, error) {
+func (mongoImpl *MongoGatewayImpl) GetBooksByAuthor(authorId string) (*[]models.Book, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)
 
@@ -316,7 +316,7 @@ func (mongoImpl *MongoGatewayImpl) GetBookByAuthor(authorId string) (*[]models.B
 	return &books, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) GetBookByCategory(category string) (*[]models.Book, error) {
+func (mongoImpl *MongoGatewayImpl) GetBooksByCategory(category string) (*[]models.Book, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)
 

@@ -497,3 +497,326 @@ func TestGetBooksIsWrongConnectionFailed(t *testing.T) {
 	assert.NotNil(t, err, "CONNECTION_FAIL")
 	app.DataStore.MethodCalled("GetBooks", mock.Anything)
 }
+
+func TestGetBookSectionByIdIsOk(t *testing.T) {
+	app := test.CreateApp()
+
+	bookSection := &models.BookSection{
+		Id: "31231212",
+		Title: "test",
+		Content: "test",
+	}
+	id := "21312312"
+
+	app.DataStore.On("GetBookSectionById", mock.Anything).Return(bookSection, nil)
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetBookSectionById(id)
+
+	assert.Nil(t, err)
+	app.DataStore.MethodCalled("GetBookSectionById", mock.Anything)
+}
+
+func TestGetBookSectionByIdWrongConnectionFailed(t *testing.T) {
+	app := test.CreateApp()
+
+	id := "21312312"
+
+	app.DataStore.On("GetBookSectionById", mock.Anything).Return(nil, errors.New("CONNECTION_FAIL"))
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetBookSectionById(id)
+
+	assert.NotNil(t, err, errors.New("CONNECTION_FAIL"))
+	app.DataStore.MethodCalled("GetBookSectionById", mock.Anything)
+}
+
+func TestGetBookByIdIsOk(t *testing.T) {
+	app := test.CreateApp()
+
+	book := &models.Book{
+		Id:           "312312",
+		Authors:      []models.Author{{AuthorId: "211212"}},
+		AuthorCount:  1,
+		Title:        "test",
+		AboutTheBook: "test",
+		Description:  "test",
+		Content: []models.BookContent{{
+			Chapter: "test",
+			Sections: []models.BookSectionId{{
+				SectionId: "12312312312",
+			}},
+		}},
+		CoverImage:     "test",
+		MinimumPrice:   321.12,
+		SuggestedPrice: 21312.12,
+		Reviews:        10,
+		State:          "UNPUBLISHED",
+		CreatedAt:      time.Time{},
+		UpdatedAt:      time.Time{},
+		LanguageName:   "test",
+		LanguageCode:   "test",
+		Categories:     []string{"test", "test", "test", "test", "test", "test"},
+		ReadingOptions: []models.ReadingOption{{
+			Option:      "test",
+			Description: "test",
+		}},
+	}
+	id := "21312312"
+
+	app.DataStore.On("GetBookById", mock.Anything).Return(book, nil)
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetBookById(id)
+
+	assert.Nil(t, err)
+	app.DataStore.MethodCalled("GetBookById", mock.Anything)
+}
+
+func TestGetBookByIdWrongConnectionFailed(t *testing.T) {
+	app := test.CreateApp()
+
+	id := "21312312"
+
+	app.DataStore.On("GetBookById", mock.Anything).Return(nil, errors.New("CONNECTION_FAIL"))
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetBookById(id)
+
+	assert.NotNil(t, err, errors.New("CONNECTION_FAIL"))
+	app.DataStore.MethodCalled("GetBookById", mock.Anything)
+}
+
+func TestGetBooksByAuthorIsOk(t *testing.T) {
+	app := test.CreateApp()
+
+	books := &[]models.Book{{
+		Id:           "312312",
+		Authors:      []models.Author{{AuthorId: "211212"}},
+		AuthorCount:  1,
+		Title:        "test",
+		AboutTheBook: "test",
+		Description:  "test",
+		Content: []models.BookContent{{
+			Chapter: "test",
+			Sections: []models.BookSectionId{{
+				SectionId: "12312312312",
+			}},
+		}},
+		CoverImage:     "test",
+		MinimumPrice:   321.12,
+		SuggestedPrice: 21312.12,
+		Reviews:        10,
+		State:          "UNPUBLISHED",
+		CreatedAt:      time.Time{},
+		UpdatedAt:      time.Time{},
+		LanguageName:   "test",
+		LanguageCode:   "test",
+		Categories:     []string{"test", "test", "test", "test", "test", "test"},
+		ReadingOptions: []models.ReadingOption{{
+			Option:      "test",
+			Description: "test",
+		}},
+	}}
+	authorId := "21312312"
+
+	app.DataStore.On("GetBooksByAuthor", mock.Anything).Return(books, nil)
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetBooksByAuthor(authorId)
+
+	assert.Nil(t, err)
+	app.DataStore.MethodCalled("GetBooksByAuthor", mock.Anything)
+}
+
+func TestGetBooksByAuthorWrongConnectionFailed(t *testing.T) {
+	app := test.CreateApp()
+
+	authorId := "21312312"
+
+	app.DataStore.On("GetBooksByAuthor", mock.Anything).Return(nil, errors.New("CONNECTION_FAIL"))
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetBooksByAuthor(authorId)
+
+	assert.NotNil(t, err, errors.New("CONNECTION_FAIL"))
+	app.DataStore.MethodCalled("GetBooksByAuthor", mock.Anything)
+}
+
+func TestGetBooksByCategoryIsOk(t *testing.T) {
+	app := test.CreateApp()
+
+	books := &[]models.Book{{
+		Id:           "312312",
+		Authors:      []models.Author{{AuthorId: "211212"}},
+		AuthorCount:  1,
+		Title:        "test",
+		AboutTheBook: "test",
+		Description:  "test",
+		Content: []models.BookContent{{
+			Chapter: "test",
+			Sections: []models.BookSectionId{{
+				SectionId: "12312312312",
+			}},
+		}},
+		CoverImage:     "test",
+		MinimumPrice:   321.12,
+		SuggestedPrice: 21312.12,
+		Reviews:        10,
+		State:          "UNPUBLISHED",
+		CreatedAt:      time.Time{},
+		UpdatedAt:      time.Time{},
+		LanguageName:   "test",
+		LanguageCode:   "test",
+		Categories:     []string{"test", "test", "test", "test", "test", "test"},
+		ReadingOptions: []models.ReadingOption{{
+			Option:      "test",
+			Description: "test",
+		}},
+	}}
+	category := "Go"
+
+	app.DataStore.On("GetBooksByCategory", mock.Anything).Return(books, nil)
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetBooksByCategory(category)
+
+	assert.Nil(t, err)
+	app.DataStore.MethodCalled("GetBooksByCategory", mock.Anything)
+}
+
+func TestGetBooksByCategoryWrongConnectionFailed(t *testing.T) {
+	app := test.CreateApp()
+
+	category := "Go"
+
+	app.DataStore.On("GetBooksByCategory", mock.Anything).Return(nil, errors.New("CONNECTION_FAIL"))
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetBooksByCategory(category)
+
+	assert.NotNil(t, err, errors.New("CONNECTION_FAIL"))
+	app.DataStore.MethodCalled("GetBooksByCategory", mock.Anything)
+}
+
+func TestDeleteBookIsOk(t *testing.T) {
+	app := test.CreateApp()
+
+	id := "21312312"
+
+	app.DataStore.On("DeleteBook", mock.Anything).Return(nil)
+
+	err := BookUseCase{
+		datastore: app.DataStore,
+	}.DeleteBook(id)
+
+	assert.Nil(t, err)
+	app.DataStore.MethodCalled("DeleteBook", mock.Anything)
+}
+
+func TestDeleteBookWrongConnectionFailed(t *testing.T) {
+	app := test.CreateApp()
+
+	id := "21312312"
+
+	app.DataStore.On("DeleteBook", mock.Anything).Return(errors.New("CONNECTION_FAIL"))
+
+	err := BookUseCase{
+		datastore: app.DataStore,
+	}.DeleteBook(id)
+
+	assert.NotNil(t, err, errors.New("CONNECTION_FAIL"))
+	app.DataStore.MethodCalled("DeleteBook", mock.Anything)
+}
+
+func TestUpdateBookIsOk(t *testing.T) {
+	app := test.CreateApp()
+
+	book := &models.Book{
+		Id:           "312312",
+		Authors:      []models.Author{{AuthorId: "211212"}},
+		AuthorCount:  1,
+		Title:        "test",
+		AboutTheBook: "test",
+		Description:  "test",
+		Content: []models.BookContent{{
+			Chapter: "test",
+			Sections: []models.BookSectionId{{
+				SectionId: "12312312312",
+			}},
+		}},
+		CoverImage:     "test",
+		MinimumPrice:   321.12,
+		SuggestedPrice: 21312.12,
+		Reviews:        10,
+		State:          "UNPUBLISHED",
+		CreatedAt:      time.Time{},
+		UpdatedAt:      time.Time{},
+		LanguageName:   "test",
+		LanguageCode:   "test",
+		Categories:     []string{"test", "test", "test", "test", "test", "test"},
+		ReadingOptions: []models.ReadingOption{{
+			Option:      "test",
+			Description: "test",
+		}},
+	}
+
+	app.DataStore.On("UpdateBook", mock.Anything).Return(book, nil)
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.UpdateBook(book)
+
+	assert.Nil(t, err)
+	app.DataStore.MethodCalled("UpdateBook", mock.Anything)
+}
+
+func TestUpdateBookWrongConnectionFailed(t *testing.T) {
+	app := test.CreateApp()
+
+	book := &models.Book{
+		Id:           "312312",
+		Authors:      []models.Author{{AuthorId: "211212"}},
+		AuthorCount:  1,
+		Title:        "test",
+		AboutTheBook: "test",
+		Description:  "test",
+		Content: []models.BookContent{{
+			Chapter: "test",
+			Sections: []models.BookSectionId{{
+				SectionId: "12312312312",
+			}},
+		}},
+		CoverImage:     "test",
+		MinimumPrice:   321.12,
+		SuggestedPrice: 21312.12,
+		Reviews:        10,
+		State:          "UNPUBLISHED",
+		CreatedAt:      time.Time{},
+		UpdatedAt:      time.Time{},
+		LanguageName:   "test",
+		LanguageCode:   "test",
+		Categories:     []string{"test", "test", "test", "test", "test", "test"},
+		ReadingOptions: []models.ReadingOption{{
+			Option:      "test",
+			Description: "test",
+		}},
+	}
+
+	app.DataStore.On("UpdateBook", mock.Anything).Return(nil, errors.New("CONNECTION_FAIL"))
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.UpdateBook(book)
+
+	assert.NotNil(t, err, errors.New("CONNECTION_FAIL"))
+	app.DataStore.MethodCalled("UpdateBook", mock.Anything)
+}
