@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"leanpub-app/app/test"
 	"leanpub-app/domain/models"
+	"leanpub-app/domain/models/dtos"
 	"testing"
 	"time"
 )
@@ -301,4 +302,179 @@ func TestGetUserByIdIsWrongConnectionFailed(t *testing.T) {
 
 	assert.NotNil(t, err, "CONNECTION_FAIL")
 	app.DataStore.MethodCalled("GetUserById", mock.Anything)
+}
+
+func TestSaveBookIsOk(t *testing.T) {
+	app := test.CreateApp()
+
+	bookDto := &dtos.BookDto{
+		Id:           "312312",
+		Authors:      []models.Author{{AuthorId: "211212"}},
+		AuthorCount:  1,
+		Title:        "test",
+		AboutTheBook: "test",
+		Description:  "test",
+		Content: []dtos.BookContentDto{{
+			Chapter: "test",
+			Sections: []models.BookSection{{
+				Id:      "12312",
+				Title:   "test",
+				Content: "test",
+			}},
+		}},
+		CoverImage:     "test",
+		MinimumPrice:   321.12,
+		SuggestedPrice: 21312.12,
+		Reviews:        10,
+		State:          "UNPUBLISHED",
+		CreatedAt:      time.Time{},
+		UpdatedAt:      time.Time{},
+		LanguageName:   "test",
+		LanguageCode:   "test",
+		Categories:     []string{"test", "test", "test", "test", "test", "test"},
+		ReadingOptions: []models.ReadingOption{{
+			Option:      "test",
+			Description: "test",
+		}},
+	}
+	savedBook := &models.Book{
+		Id:           "312312",
+		Authors:      []models.Author{{AuthorId: "211212"}},
+		AuthorCount:  1,
+		Title:        "test",
+		AboutTheBook: "test",
+		Description:  "test",
+		Content: []models.BookContent{{
+			Chapter: "test",
+			Sections: []models.BookSectionId{{
+				SectionId: "12312312312",
+			}},
+		}},
+		CoverImage:     "test",
+		MinimumPrice:   321.12,
+		SuggestedPrice: 21312.12,
+		Reviews:        10,
+		State:          "UNPUBLISHED",
+		CreatedAt:      time.Time{},
+		UpdatedAt:      time.Time{},
+		LanguageName:   "test",
+		LanguageCode:   "test",
+		Categories:     []string{"test", "test", "test", "test", "test", "test"},
+		ReadingOptions: []models.ReadingOption{{
+			Option:      "test",
+			Description: "test",
+		}},
+	}
+
+	app.DataStore.On("SaveBook", mock.Anything).Return(savedBook, nil)
+	app.DataStore.On("SaveBookSections", mock.Anything).Return(nil)
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.SaveBook(bookDto)
+
+	assert.Nil(t, err)
+	app.DataStore.MethodCalled("SaveBook", mock.Anything)
+	app.DataStore.MethodCalled("SaveBookSections", mock.Anything)
+}
+
+func TestSaveBookIsWrongConnectionFailed(t *testing.T) {
+	app := test.CreateApp()
+
+	bookDto := &dtos.BookDto{
+		Id:           "312312",
+		Authors:      []models.Author{{AuthorId: "211212"}},
+		AuthorCount:  1,
+		Title:        "test",
+		AboutTheBook: "test",
+		Description:  "test",
+		Content: []dtos.BookContentDto{{
+			Chapter: "test",
+			Sections: []models.BookSection{{
+				Id:      "12312",
+				Title:   "test",
+				Content: "test",
+			}},
+		}},
+		CoverImage:     "test",
+		MinimumPrice:   321.12,
+		SuggestedPrice: 21312.12,
+		Reviews:        10,
+		State:          "UNPUBLISHED",
+		CreatedAt:      time.Time{},
+		UpdatedAt:      time.Time{},
+		LanguageName:   "test",
+		LanguageCode:   "test",
+		Categories:     []string{"test", "test", "test", "test", "test", "test"},
+		ReadingOptions: []models.ReadingOption{{
+			Option:      "test",
+			Description: "test",
+		}},
+	}
+
+	app.DataStore.On("SaveBook", mock.Anything).Return(nil, errors.New("CONNECTION_FAIL"))
+	app.DataStore.On("SaveBookSections", mock.Anything).Return(nil)
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.SaveBook(bookDto)
+
+	assert.NotNil(t, err, "CONNECTION_FAIL")
+	app.DataStore.MethodCalled("SaveBook", mock.Anything)
+	app.DataStore.MethodCalled("SaveBookSections", mock.Anything)
+}
+
+func TestGetBooksIsOk(t *testing.T) {
+	app := test.CreateApp()
+
+	book := &[]models.Book{{
+		Id:           "312312",
+		Authors:      []models.Author{{AuthorId: "211212"}},
+		AuthorCount:  1,
+		Title:        "test",
+		AboutTheBook: "test",
+		Description:  "test",
+		Content: []models.BookContent{{
+			Chapter: "test",
+			Sections: []models.BookSectionId{{
+				SectionId: "12312312312",
+			}},
+		}},
+		CoverImage:     "test",
+		MinimumPrice:   321.12,
+		SuggestedPrice: 21312.12,
+		Reviews:        10,
+		State:          "UNPUBLISHED",
+		CreatedAt:      time.Time{},
+		UpdatedAt:      time.Time{},
+		LanguageName:   "test",
+		LanguageCode:   "test",
+		Categories:     []string{"test", "test", "test", "test", "test", "test"},
+		ReadingOptions: []models.ReadingOption{{
+			Option:      "test",
+			Description: "test",
+		}},
+	}}
+
+	app.DataStore.On("GetBooks", mock.Anything).Return(book, nil)
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetBooks()
+
+	assert.Nil(t, err)
+	app.DataStore.MethodCalled("GetBooks", mock.Anything)
+}
+
+func TestGetBooksIsWrongConnectionFailed(t *testing.T) {
+	app := test.CreateApp()
+
+	app.DataStore.On("GetBooks", mock.Anything).Return(nil, errors.New("CONNECTION_FAIL"))
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetBooks()
+
+	assert.NotNil(t, err, "CONNECTION_FAIL")
+	app.DataStore.MethodCalled("GetBooks", mock.Anything)
 }

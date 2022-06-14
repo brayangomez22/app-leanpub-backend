@@ -155,7 +155,7 @@ func (mongoImpl *MongoGatewayImpl) SaveBook(book *models.Book) (*models.Book, er
 	return book, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) SaveBookSections(bookSection *models.BookSection) error {
+func (mongoImpl *MongoGatewayImpl) SaveBookSection(bookSection *models.BookSection) error {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(bookSections)
 

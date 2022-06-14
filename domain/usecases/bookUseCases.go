@@ -48,7 +48,7 @@ func (bookUseCase BookUseCase) SaveBook(book *dtos.BookDto) (*models.Book, error
 	}
 
 	for _, section := range bookSection {
-		err := bookUseCase.datastore.SaveBookSections(&section)
+		err := bookUseCase.datastore.SaveBookSection(&section)
 		if err != nil {
 			log.Print(err)
 		}

@@ -68,7 +68,7 @@ func (db DbGateway) SaveBook(book *models.Book) (*models.Book, error) {
 	return args.Get(0).(*models.Book), args.Error(1)
 }
 
-func (db DbGateway) SaveBookSections(bookSection *models.BookSection) error {
+func (db DbGateway) SaveBookSection(bookSection *models.BookSection) error {
 	args := db.Called(bookSection)
 	return args.Error(0)
 }
