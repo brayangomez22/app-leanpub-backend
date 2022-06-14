@@ -155,7 +155,7 @@ func (mongoImpl *MongoGatewayImpl) SaveBook(book *models.Book) (*models.Book, er
 	return book, nil
 }
 
-func (mongoImpl MongoGatewayImpl) SaveBookSections(bookSection *models.BookSection) error {
+func (mongoImpl *MongoGatewayImpl) SaveBookSections(bookSection *models.BookSection) error {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(bookSections)
 
@@ -181,7 +181,7 @@ func (mongoImpl *MongoGatewayImpl) GetBooks() (*[]models.Book, error) {
 	return &books, nil
 }
 
-func (mongoImpl MongoGatewayImpl) GetBookIndex(id string) (*[]models.BookContent, error) {
+func (mongoImpl *MongoGatewayImpl) GetBookIndex(id string) (*[]models.BookContent, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)
 
@@ -218,7 +218,7 @@ func (mongoImpl MongoGatewayImpl) GetBookIndex(id string) (*[]models.BookContent
 	return &response, nil
 }
 
-func (mongoImpl MongoGatewayImpl) GetSectionsByBookId(bookId string) (*[]models.BookSection, error)  {
+func (mongoImpl *MongoGatewayImpl) GetSectionsByBookId(bookId string) (*[]models.BookSection, error)  {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)
 
