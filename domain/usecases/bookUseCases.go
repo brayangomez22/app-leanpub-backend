@@ -19,7 +19,7 @@ func NewBookUseCase(datastore domain.DatabaseGateway) BookUseCase {
 }
 
 func (bookUseCase BookUseCase) SaveBook(book *dtos.BookDto) (*models.Book, error) {
-	var bookSection []models.BookSection
+	var bookSection []interface{}
 	var newContents []models.BookContent
 	for _, content := range book.Content {
 		var sections []models.BookSectionId
@@ -47,11 +47,9 @@ func (bookUseCase BookUseCase) SaveBook(book *dtos.BookDto) (*models.Book, error
 		newContents = append(newContents, newContent)
 	}
 
-	for _, section := range bookSection {
-		err := bookUseCase.datastore.SaveBookSection(&section)
-		if err != nil {
-			log.Print(err)
-		}
+	err := bookUseCase.datastore.SaveBookSections(bookSection)
+	if err != nil {
+		log.Print(err)
 	}
 
 	id, _ := uuid.NewRandom()
@@ -78,6 +76,10 @@ func (bookUseCase BookUseCase) SaveBook(book *dtos.BookDto) (*models.Book, error
 	}
 
 	return bookUseCase.datastore.SaveBook(&newBook)
+}
+
+func (bookUseCase BookUseCase) SaveBookSections(bookSections []interface{}) error {
+	return bookUseCase.datastore.SaveBookSections(bookSections)
 }
 
 func (bookUseCase BookUseCase) GetBooks() (*[]models.Book, error) {

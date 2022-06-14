@@ -73,6 +73,11 @@ func (db DbGateway) SaveBookSection(bookSection *models.BookSection) error {
 	return args.Error(0)
 }
 
+func (db DbGateway) SaveBookSections(bookSections []interface{}) error {
+	args := db.Called(bookSections)
+	return args.Error(0)
+}
+
 func (db DbGateway) GetBooks() (*[]models.Book, error) {
 	args := db.Called()
 	if args.Get(0) == nil {

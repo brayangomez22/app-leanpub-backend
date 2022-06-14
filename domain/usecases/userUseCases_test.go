@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"go.mongodb.org/mongo-driver/bson"
 	"leanpub-app/app/test"
 	"leanpub-app/domain/models"
 	"leanpub-app/domain/models/dtos"
@@ -421,6 +422,24 @@ func TestSaveBookIsWrongConnectionFailed(t *testing.T) {
 
 	assert.NotNil(t, err, "CONNECTION_FAIL")
 	app.DataStore.MethodCalled("SaveBook", mock.Anything)
+	app.DataStore.MethodCalled("SaveBookSections", mock.Anything)
+}
+
+func TestSaveBookSectionsIsOk(t *testing.T) {
+	app := test.CreateApp()
+
+	bookSections := []interface{}{
+		bson.D{{"id", "12312312"}, {"tile", "test 1"}, {"content", "test 1"}},
+		bson.D{{"id", "312312"}, {"title", "test 2"}, {"content", "test 2"}},
+	}
+
+	app.DataStore.On("SaveBookSections", mock.Anything).Return(nil)
+
+	err := BookUseCase{
+		datastore: app.DataStore,
+	}.SaveBookSections(bookSections)
+
+	assert.Nil(t, err)
 	app.DataStore.MethodCalled("SaveBookSections", mock.Anything)
 }
 

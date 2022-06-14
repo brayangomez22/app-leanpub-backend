@@ -163,6 +163,14 @@ func (mongoImpl *MongoGatewayImpl) SaveBookSection(bookSection *models.BookSecti
 	return err
 }
 
+func (mongoImpl *MongoGatewayImpl) SaveBookSections(sections []interface{}) error {
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	collection := mongoImpl.client.Database(database).Collection(bookSections)
+
+	_, err := collection.InsertMany(ctx, sections)
+	return err
+}
+
 func (mongoImpl *MongoGatewayImpl) GetBooks() (*[]models.Book, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)

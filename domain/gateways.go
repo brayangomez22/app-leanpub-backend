@@ -11,6 +11,7 @@ type DatabaseGateway interface {
 	UpdateUser(user *models.User) (*models.User, error)
 	SaveBook(book *models.Book) (*models.Book, error)
 	SaveBookSection(bookSection *models.BookSection) error
+	SaveBookSections(bookSections []interface{}) error
 	GetBooks() (*[]models.Book, error)
 	GetBookIndex(id string) (*[]models.BookContent, error)
 	GetSectionsByBookId(bookId string) (*[]models.BookSection, error)
