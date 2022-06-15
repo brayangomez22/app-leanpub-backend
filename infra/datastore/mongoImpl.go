@@ -14,10 +14,11 @@ import (
 )
 
 const (
-	database    = "leanpub"
-	users       = "users"
-	books       = "books"
-	bookSections = "bookSections"
+	database      = "leanpub"
+	users         = "users"
+	books         = "books"
+	bookSections  = "bookSections"
+	shoppingCarts = "shoppingCarts"
 )
 
 type MongoGatewayImpl struct {
@@ -226,7 +227,7 @@ func (mongoImpl *MongoGatewayImpl) GetBookIndex(id string) (*[]models.BookConten
 	return &response, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) GetSectionsByBookId(bookId string) (*[]models.BookSection, error)  {
+func (mongoImpl *MongoGatewayImpl) GetSectionsByBookId(bookId string) (*[]models.BookSection, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)
 
@@ -376,4 +377,83 @@ func (mongoImpl *MongoGatewayImpl) UpdateBook(book *models.Book) (*models.Book, 
 	}
 
 	return book, nil
+}
+
+func (mongoImpl *MongoGatewayImpl) SaveShoppingCart(shoppingCart *models.ShoppingCart) (*models.ShoppingCart, error) {
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	opts := options.Update().SetUpsert(true)
+	collection := mongoImpl.client.Database(database).Collection(shoppingCarts)
+
+	id, _ := uuid.NewRandom()
+	shoppingCart.Id = id.String()
+	shoppingCart.CreatedAt = time.Now()
+
+	_, err := collection.UpdateOne(ctx, bson.M{"_id": shoppingCart.Id}, bson.D{{"$set", shoppingCart}}, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return shoppingCart, nil
+}
+
+func (mongoImpl *MongoGatewayImpl) GetShoppingCarts() (*[]models.ShoppingCart, error) {
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	collection := mongoImpl.client.Database(database).Collection(shoppingCarts)
+
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+
+	var shoppingCart []models.ShoppingCart
+	err = cursor.All(ctx, &shoppingCart)
+	if err != nil {
+		return nil, err
+	}
+
+	return &shoppingCart, nil
+}
+
+func (mongoImpl *MongoGatewayImpl) GetShoppingCartById(id string) (*models.ShoppingCart, error) {
+	var shoppingCart *models.ShoppingCart
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	collection := mongoImpl.client.Database(database).Collection(shoppingCarts)
+
+	err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(&shoppingCart)
+	if err != nil {
+		return nil, errors.New("SHOPPING_CART_NOT_FOUND")
+	}
+
+	return shoppingCart, nil
+}
+
+func (mongoImpl *MongoGatewayImpl) DeleteShoppingCart(id string) error {
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	collection := mongoImpl.client.Database(database).Collection(shoppingCarts)
+
+	_, err := collection.DeleteOne(ctx, bson.M{"_id": id})
+	if err != nil {
+		return err
+	}
+
+	return err
+}
+
+func (mongoImpl MongoGatewayImpl) UpdateShoppingCart(shoppingCart *models.ShoppingCart)	(*models.ShoppingCart, error) {
+	var shoppingCartE *models.ShoppingCart
+	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
+	opts := options.Update().SetUpsert(true)
+	collection := mongoImpl.client.Database(database).Collection(shoppingCarts)
+
+	err := collection.FindOne(ctx, bson.M{"_id": shoppingCart.Id}).Decode(&shoppingCartE)
+	if err != nil {
+		return nil, errors.New("SHOPPING_CART_NOT_FOUND")
+	}
+
+	_, err = collection.UpdateOne(ctx, bson.M{"_id": shoppingCart.Id}, bson.D{{"$set", shoppingCart}}, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return shoppingCart, nil
 }
