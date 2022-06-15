@@ -118,6 +118,7 @@ func (app Application) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	updatedUser, err := app.userUseCases.UpdateUser(&user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	data, err := json.Marshal(updatedUser)
@@ -176,6 +177,7 @@ func (app Application) GetBookIndex(w http.ResponseWriter, r *http.Request) {
 	book, err := app.bookUseCases.GetBookIndex(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	data, err := json.Marshal(&book)
@@ -310,6 +312,104 @@ func (app Application) UpdateBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data, err := json.Marshal(updatedBook)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	w.Write(data)
+}
+
+func (app Application) SaveShoppingCart(w http.ResponseWriter, r *http.Request)  {
+	var shoppingCart models.ShoppingCart
+	err := json.NewDecoder(r.Body).Decode(&shoppingCart)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	shoppingCartSaved, err := app.shoppingCartUseCases.SaveShoppingCart(&shoppingCart)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data, err := json.Marshal(shoppingCartSaved)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	w.Write(data)
+}
+
+func (app Application) GetShoppingCarts(w http.ResponseWriter, r *http.Request) {
+	shoppingCarts, err := app.shoppingCartUseCases.GetShoppingCarts()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data, err := json.Marshal(shoppingCarts)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	w.Write(data)
+}
+
+func (app Application) GetShoppingCartById(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	shoppingCart, err := app.shoppingCartUseCases.GetShoppingCartById(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data, err := json.Marshal(shoppingCart)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	w.Write(data)
+}
+
+func (app Application) DeleteShoppingCart(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	err := app.shoppingCartUseCases.DeleteShoppingCart(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (app Application) UpdateShoppingCart(w http.ResponseWriter, r *http.Request) {
+	var shoppingCart models.ShoppingCart
+	err := json.NewDecoder(r.Body).Decode(&shoppingCart)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if shoppingCart.Id == "" {
+		http.Error(w, "SHOPPING_CART_NOT_FOUND", http.StatusBadRequest)
+		return
+	}
+
+	updatedShoppingCart, err := app.shoppingCartUseCases.UpdateShoppingCart(&shoppingCart)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data, err := json.Marshal(updatedShoppingCart)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
