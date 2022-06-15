@@ -27,6 +27,11 @@ func (app Application) Setup() {
 	app.Router.HandleFunc("/books/category/{category}", app.GetBooksByCategory).Methods(http.MethodGet, http.MethodOptions)
 	app.Router.HandleFunc("/books/{id}", app.DeleteBook).Methods(http.MethodDelete, http.MethodOptions)
 	app.Router.HandleFunc("/books", app.UpdateBook).Methods(http.MethodPut, http.MethodOptions)
+	app.Router.HandleFunc("/cart", app.SaveShoppingCart).Methods(http.MethodPost, http.MethodOptions)
+	app.Router.HandleFunc("/cart", app.GetShoppingCarts).Methods(http.MethodGet, http.MethodOptions)
+	app.Router.HandleFunc("/cart/{id}", app.GetShoppingCartById).Methods(http.MethodGet, http.MethodOptions)
+	app.Router.HandleFunc("/cart/{id}", app.DeleteShoppingCart).Methods(http.MethodDelete, http.MethodOptions)
+	app.Router.HandleFunc("/cart", app.UpdateShoppingCart).Methods(http.MethodPut, http.MethodOptions)
 }
 
 func (app Application) routeMiddleware(next http.Handler) http.Handler {

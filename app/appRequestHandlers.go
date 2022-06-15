@@ -301,7 +301,7 @@ func (app Application) UpdateBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if book.Id == "" {
-		http.Error(w, "USER_NOT_FOUND", http.StatusBadRequest)
+		http.Error(w, "BOOK_NOT_FOUND", http.StatusBadRequest)
 		return
 	}
 
