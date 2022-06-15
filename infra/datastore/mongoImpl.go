@@ -190,7 +190,7 @@ func (mongoImpl *MongoGatewayImpl) GetBooks() (*[]models.Book, error) {
 	return &books, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) GetBookIndex(id string) (*[]models.BookContent, error) {
+func (mongoImpl *MongoGatewayImpl) GetBookIndex(id string) (*models.BookIndex, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)
 
@@ -213,21 +213,17 @@ func (mongoImpl *MongoGatewayImpl) GetBookIndex(id string) (*[]models.BookConten
 		return nil, err
 	}
 
-	var response []models.BookContent
-	var bookIndex []models.BookIndex
-	err = cursor.All(ctx, &bookIndex)
-	if err != nil {
-		return nil, err
+	var bookIndex models.BookIndex
+	for cursor.Next(ctx) {
+		if err := cursor.Decode(&bookIndex); err != nil {
+			return nil, err
+		}
 	}
 
-	for _, book := range bookIndex[0].Content {
-		response = append(response, book)
-	}
-
-	return &response, nil
+	return &bookIndex, nil
 }
 
-func (mongoImpl *MongoGatewayImpl) GetSectionsByBookId(bookId string) (*[]models.BookSection, error) {
+func (mongoImpl *MongoGatewayImpl) GetSectionsByBookId(bookId string) (*models.BookSections, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 30+time.Second)
 	collection := mongoImpl.client.Database(database).Collection(books)
 
@@ -240,14 +236,14 @@ func (mongoImpl *MongoGatewayImpl) GetSectionsByBookId(bookId string) (*[]models
 				{"from", "bookSections"},
 				{"localField", "content.sections.sectionId"},
 				{"foreignField", "_id"},
-				{"as", "index"},
+				{"as", "sections"},
 			},
 		},
 	})
 	pipeline = append(pipeline, bson.D{
 		{"$project",
 			bson.D{
-				{"index", 1},
+				{"sections", 1},
 				{"_id", 0},
 			},
 		},
@@ -259,18 +255,14 @@ func (mongoImpl *MongoGatewayImpl) GetSectionsByBookId(bookId string) (*[]models
 		return nil, err
 	}
 
-	var response []models.BookSection
-	var sections []models.BookSectionIndex
-	err = cursor.All(ctx, &sections)
-	if err != nil {
-		return nil, err
+	var sections models.BookSections
+	for cursor.Next(ctx) {
+		if err := cursor.Decode(&sections); err != nil {
+			return nil, err
+		}
 	}
 
-	for _, section := range sections[0].Index {
-		response = append(response, section)
-	}
-
-	return &response, nil
+	return &sections, nil
 }
 
 func (mongoImpl *MongoGatewayImpl) GetBookSectionById(id string) (*models.BookSection, error) {

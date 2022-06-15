@@ -11,8 +11,8 @@ const (
 	StateClosed      StateBook = "CLOSED"
 )
 
-type BookSectionIndex struct {
-	Index []BookSection `json:"index" bson:"index"`
+type BookSections struct {
+	Sections []BookSection `json:"sections" bson:"sections"`
 }
 
 type BookIndex struct {

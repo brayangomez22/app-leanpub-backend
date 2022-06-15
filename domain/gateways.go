@@ -13,8 +13,8 @@ type DatabaseGateway interface {
 	SaveBookSection(bookSection *models.BookSection) error
 	SaveBookSections(bookSections []interface{}) error
 	GetBooks() (*[]models.Book, error)
-	GetBookIndex(id string) (*[]models.BookContent, error)
-	GetSectionsByBookId(bookId string) (*[]models.BookSection, error)
+	GetBookIndex(id string) (*models.BookIndex, error)
+	GetSectionsByBookId(bookId string) (*models.BookSections, error)
 	GetBookSectionById(id string) (*models.BookSection, error)
 	GetBookById(id string) (*models.Book, error)
 	GetBooksByAuthor(authorId string) (*[]models.Book, error)
