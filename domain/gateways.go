@@ -21,5 +21,10 @@ type DatabaseGateway interface {
 	GetBooksByCategory(category string) (*[]models.Book, error)
 	DeleteBook(id string) error
 	UpdateBook(book *models.Book) (*models.Book, error)
+	SaveShoppingCart(shoppingCart *models.ShoppingCart) (*models.ShoppingCart, error)
+	GetShoppingCarts() (*[]models.ShoppingCart, error)
+	GetShoppingCartById(id string) (*models.ShoppingCart, error)
+	DeleteShoppingCart(id string) error
+	UpdateShoppingCart(shoppingCart *models.ShoppingCart)	(*models.ShoppingCart, error)
 	Setup()
 }

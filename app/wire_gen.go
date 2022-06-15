@@ -17,6 +17,7 @@ func CreateApp() *Application {
 	databaseGateway := datastore.NewMongoGatewayImpl()
 	userUseCases := usecases.NewUserUseCase(databaseGateway)
 	bookUseCases := usecases.NewBookUseCase(databaseGateway)
-	application := NewApplication(databaseGateway, userUseCases, bookUseCases)
+	shoppingCartUseCases := usecases.NewShoppingCartUseCase(databaseGateway)
+	application := NewApplication(databaseGateway, userUseCases, bookUseCases, shoppingCartUseCases)
 	return application
 }

@@ -11,6 +11,7 @@ func CreateApp() *Application {
 		DataStoreProvider,
 		UserUseCasesProvider,
 		BookUseCasesProvider,
+		ShoppingCartUseCasesProvider,
 		AppProvider,
 	)
 
