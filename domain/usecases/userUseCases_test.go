@@ -498,6 +498,79 @@ func TestGetBooksIsWrongConnectionFailed(t *testing.T) {
 	app.DataStore.MethodCalled("GetBooks", mock.Anything)
 }
 
+func TestGetBookIndex(t *testing.T) {
+	app := test.CreateApp()
+
+	id := "12312312"
+	bookIndex := &models.BookIndex{
+		Content: []models.BookContent{{
+			Chapter: "test",
+			Sections: []models.BookSectionId{{
+				SectionId: "312312",
+			}},
+		}},
+	}
+
+	app.DataStore.On("GetBookIndex", mock.Anything).Return(bookIndex, nil)
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetBookIndex(id)
+
+	assert.Nil(t, err)
+	app.DataStore.MethodCalled("GetBookIndex", mock.Anything)
+}
+
+func TestGetBookIndexWrongConnectionFailed(t *testing.T) {
+	app := test.CreateApp()
+
+	id := "12312312"
+	app.DataStore.On("GetBookIndex", mock.Anything).Return(nil, errors.New("CONNECTION_FAIL"))
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetBookIndex(id)
+
+	assert.NotNil(t, err, "CONNECTION_FAIL")
+	app.DataStore.MethodCalled("GetBookIndex", mock.Anything)
+}
+
+func TestGetSectionsByBookIdIsOk(t *testing.T) {
+	app := test.CreateApp()
+
+	bookId := "12312312"
+	sections := &models.BookSections{
+		Sections: []models.BookSection{{
+			Id: "312312",
+			Title: "test",
+			Content: "test",
+		}},
+	}
+
+	app.DataStore.On("GetSectionsByBookId", mock.Anything).Return(sections, nil)
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetSectionsByBookId(bookId)
+
+	assert.Nil(t, err)
+	app.DataStore.MethodCalled("GetSectionsByBookId", mock.Anything)
+}
+
+func TestGetSectionsByBookIdWrongConnectionFailed(t *testing.T) {
+	app := test.CreateApp()
+	bookId := "12312312"
+
+	app.DataStore.On("GetSectionsByBookId", mock.Anything).Return(nil, errors.New("CONNECTION_FAIL"))
+
+	_, err := BookUseCase{
+		datastore: app.DataStore,
+	}.GetSectionsByBookId(bookId)
+
+	assert.NotNil(t, err, "CONNECTION_FAIL")
+	app.DataStore.MethodCalled("GetSectionsByBookId", mock.Anything)
+}
+
 func TestGetBookSectionByIdIsOk(t *testing.T) {
 	app := test.CreateApp()
 

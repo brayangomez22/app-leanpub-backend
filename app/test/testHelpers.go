@@ -86,20 +86,20 @@ func (db DbGateway) GetBooks() (*[]models.Book, error) {
 	return args.Get(0).(*[]models.Book), args.Error(1)
 }
 
-func (db DbGateway) GetBookIndex(id string) (*[]models.BookContent, error) {
+func (db DbGateway) GetBookIndex(id string) (*models.BookIndex, error) {
 	args := db.Called(id)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*[]models.BookContent), args.Error(1)
+	return args.Get(0).(*models.BookIndex), args.Error(1)
 }
 
-func (db DbGateway) GetSectionsByBookId(bookId string) (*[]models.BookSection, error) {
+func (db DbGateway) GetSectionsByBookId(bookId string) (*models.BookSections, error) {
 	args := db.Called(bookId)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*[]models.BookSection), args.Error(1)
+	return args.Get(0).(*models.BookSections), args.Error(1)
 }
 
 func (db DbGateway) GetBookSectionById(id string) (*models.BookSection, error) {
@@ -145,4 +145,24 @@ func (db DbGateway) UpdateBook(book *models.Book) (*models.Book, error) {
 		return nil, args.Error(1)
 	}
 	return args.Get(0).(*models.Book), args.Error(1)
+}
+
+func (db DbGateway) SaveShoppingCart(shoppingCart *models.ShoppingCart) (*models.ShoppingCart, error) {
+	panic("implement me")
+}
+
+func (db DbGateway) GetShoppingCarts() (*[]models.ShoppingCart, error) {
+	panic("implement me")
+}
+
+func (db DbGateway) GetShoppingCartById(id string) (*models.ShoppingCart, error) {
+	panic("implement me")
+}
+
+func (db DbGateway) DeleteShoppingCart(id string) error {
+	panic("implement me")
+}
+
+func (db DbGateway) UpdateShoppingCart(shoppingCart *models.ShoppingCart) (*models.ShoppingCart, error) {
+	panic("implement me")
 }
