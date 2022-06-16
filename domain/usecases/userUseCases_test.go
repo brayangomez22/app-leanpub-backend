@@ -511,7 +511,14 @@ func TestGetBookIndex(t *testing.T) {
 		}},
 	}
 
+	section := &models.BookSection{
+		Id: "21312",
+		Title: "test",
+		Content: "test",
+	}
+
 	app.DataStore.On("GetBookIndex", mock.Anything).Return(bookIndex, nil)
+	app.DataStore.On("GetBookSectionById", mock.Anything).Return(section, nil)
 
 	_, err := BookUseCase{
 		datastore: app.DataStore,
@@ -519,6 +526,7 @@ func TestGetBookIndex(t *testing.T) {
 
 	assert.Nil(t, err)
 	app.DataStore.MethodCalled("GetBookIndex", mock.Anything)
+	app.DataStore.MethodCalled("GetBookSectionById", mock.Anything)
 }
 
 func TestGetBookIndexWrongConnectionFailed(t *testing.T) {

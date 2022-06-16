@@ -5,7 +5,6 @@ import (
 	"leanpub-app/domain"
 	"leanpub-app/domain/models"
 	"leanpub-app/domain/models/dtos"
-	"log"
 )
 
 type BookUseCase struct {
@@ -49,7 +48,7 @@ func (bookUseCase BookUseCase) SaveBook(book *dtos.BookDto) (*models.Book, error
 
 	err := bookUseCase.datastore.SaveBookSections(bookSection)
 	if err != nil {
-		log.Print(err)
+		return nil, err
 	}
 
 	id, _ := uuid.NewRandom()
@@ -89,7 +88,7 @@ func (bookUseCase BookUseCase) GetBooks() (*[]models.Book, error) {
 func (bookUseCase BookUseCase) GetBookIndex(id string) (*[]models.Index, error) {
 	bookIndex, err := bookUseCase.datastore.GetBookIndex(id)
 	if err != nil {
-		log.Print(err)
+		return nil, err
 	}
 
 	var response []models.Index
