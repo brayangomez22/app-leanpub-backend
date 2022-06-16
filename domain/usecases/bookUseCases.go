@@ -86,8 +86,39 @@ func (bookUseCase BookUseCase) GetBooks() (*[]models.Book, error) {
 	return bookUseCase.datastore.GetBooks()
 }
 
-func (bookUseCase BookUseCase) GetBookIndex(id string) (*models.BookIndex, error) {
-	return bookUseCase.datastore.GetBookIndex(id)
+func (bookUseCase BookUseCase) GetBookIndex(id string) (*[]models.Index, error) {
+	bookIndex, err := bookUseCase.datastore.GetBookIndex(id)
+	if err != nil {
+		log.Print(err)
+	}
+
+	var response []models.Index
+
+	for _, content := range bookIndex.Content {
+		var sections []models.BookSectionIndex
+		for _, section := range content.Sections{
+			bookSection, err := bookUseCase.GetBookSectionById(section.SectionId)
+			if err != nil {
+				return nil, err
+			}
+
+			newSection := models.BookSectionIndex{
+				Id: bookSection.Id,
+				Title: bookSection.Title,
+			}
+
+			sections = append(sections, newSection)
+		}
+
+		newResponse := models.Index{
+			Chapter: content.Chapter,
+			Sections: sections,
+		}
+
+		response = append(response, newResponse)
+	}
+
+	return &response, nil
 }
 
 func (bookUseCase BookUseCase) GetSectionsByBookId(bookId string) (*models.BookSections, error) {
